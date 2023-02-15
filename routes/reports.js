@@ -20,8 +20,8 @@ router.get('/report', async (req, res) => {
         //Checks if a report with the sent queries already exists
         const existingReports = await reports.findOne({
             user_id: user_id,
-            year: year,
-            month: month,
+            year: Number(year),
+            month: Number(month),
         });
 
         //Report was already searched for - return it and finish
@@ -42,8 +42,8 @@ router.get('/report', async (req, res) => {
             //Creates a new report item
             const newReportItem = new reports({
                 user_id: user_id,
-                year: year,
-                month: month,
+                year: Number(year),
+                month: Number(month),
             });
             //For each cost item, adds it to the relevant category list in the report
             results.forEach(cost => {

@@ -7,13 +7,13 @@ const costItemSchema = new Schema({
         type: String
     },
     year: {
-        type: String
+        type: Number
     },
     month: {
-      type: String
+      type: Number
     },
     day: {
-        type: String
+        type: Number
     },
     id: {
         type: mongoose.Types.ObjectId,
@@ -26,7 +26,7 @@ const costItemSchema = new Schema({
         type: String
     },
     sum: {
-        type: String
+        type: Number
     },
 });
 

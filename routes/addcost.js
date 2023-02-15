@@ -76,9 +76,9 @@ costrouter.post("/addcost", async (req, res) => {
     //In this line all the data is valid. Then, a new cost item will be created
     const costItem = new costsmodel({
         user_id: user_id,
-        year: year,
-        month: month,
-        day: day,
+        year: Number(year),
+        month: Number(month),
+        day: Number(day),
         description: description,
         category: category,
         sum: sum,
@@ -87,24 +87,24 @@ costrouter.post("/addcost", async (req, res) => {
     //Checks if a report for the requested user_id, year and month was created in the past
     const report = await reports.findOne({
         user_id: user_id,
-        year: year,
-        month: month,
+        year: Number(year),
+        month: Number(month),
     });
 
     //If a report was found, the new cost item will be added to the relevant category list
     if (report) {
         report.report[category].push({
-            day: day,
+            day: Number(day),
             description: description,
-            sum: sum,
+            sum: Number(sum),
         });
 
         //Updates the report with the new addition
         await reports.updateOne(
             {
                 user_id: user_id,
-                year: year,
-                month: month,
+                year: Number(year),
+                month: Number(month),
             },
             { report: report.report }
         );
