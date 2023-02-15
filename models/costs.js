@@ -27,8 +27,8 @@ const costItemSchema = new Schema({
     },
     sum: {
         type: String
-    }
+    },
 });
 
 const costs = mongoose.model('costItemSchema',costItemSchema);
-module.exports = costs
+module.exports = costs;

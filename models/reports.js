@@ -27,7 +27,7 @@ const reportSchema = new Schema({
     month: {
         type: String,
         required: true,
-    }
+    },
 });
 
 const reports = mongoose.model('reportSchema', reportSchema);

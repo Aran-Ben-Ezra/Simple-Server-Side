@@ -15,9 +15,9 @@ const reportsRouter = require('./routes/reports');
 const connectDatabase = async () =>{
   try{
     await mongoose.connect("mongodb+srv://apiproject:Api123123!@cluster0.wvfnl3l.mongodb.net/?retryWrites=true&w=majority");
-    console.log("connected to database")
+    console.log("connected to database");
   } catch (error){
-    console.log(error)
+    console.log(error);
   }
 }
 connectDatabase();

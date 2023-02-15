@@ -14,8 +14,8 @@ const userSchema = new Schema({
     },
     birthday: {
         type: String
-    }
+    },
 });
 
 const users = mongoose.model('userSchema',userSchema);
-module.exports = users
+module.exports = users;
