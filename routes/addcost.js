@@ -69,7 +69,7 @@ costrouter.post("/addcost", async (req, res) => {
     }
 
     //If the user typed a negative sum
-    if (sum < 0) {
+    if (sum < 0 || isNaN(Number(sum))) {
         return res.status(400).json({error: "sum must be a non-negative number"});
     }
 
@@ -81,7 +81,7 @@ costrouter.post("/addcost", async (req, res) => {
         day: Number(day),
         description: description,
         category: category,
-        sum: sum,
+        sum: Number(sum),
     });
 
     //Checks if a report for the requested user_id, year and month was created in the past
