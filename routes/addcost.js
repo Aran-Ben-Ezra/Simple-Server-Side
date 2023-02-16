@@ -43,13 +43,13 @@ costrouter.post("/addcost", async (req, res) => {
 
     //If the user picked a year in the future or a negative or a non-integer year
     const currentYear = new Date().getFullYear();
-    if (year < 0 || year > currentYear || !Number.isInteger(Number(year))) {
+    if (year && (year < 0 || year > currentYear || !Number.isInteger(Number(year)))) {
         return res.status(400).json({error: 'Invalid year'});
     }
 
     //If the user picked an invalid month
     const currentMonth = new Date().getMonth()+1;
-    if (month < 1 || month > 12 || !Number.isInteger(Number(month))) {
+    if (month && (month < 1 || month > 12 || !Number.isInteger(Number(month)))) {
         return res.status(400).json({error: 'Invalid month'});
     }
     else if (Number(year) === currentYear && Number(month) > currentMonth) {
@@ -61,7 +61,7 @@ costrouter.post("/addcost", async (req, res) => {
 
     //If the user picked an invalid day
     const currentDay = new Date().getDate()
-    if (day < 1 || day > monthDays[month - 1] || !Number.isInteger(Number(day))) {
+    if (day && (day < 1 || day > monthDays[month - 1] || !Number.isInteger(Number(day)))) {
         return res.status(400).json({error: 'Invalid day'});
     }
     else if (Number(year) === currentYear && Number(month) === currentMonth && Number(day) > currentDay) {
@@ -76,38 +76,65 @@ costrouter.post("/addcost", async (req, res) => {
     //In this line all the data is valid. Then, a new cost item will be created
     const costItem = new costsmodel({
         user_id: user_id,
-        year: Number(year),
-        month: Number(month),
-        day: Number(day),
         description: description,
         category: category,
         sum: Number(sum),
     });
 
-    //Checks if a report for the requested user_id, year and month was created in the past
-    const report = await reports.findOne({
-        user_id: user_id,
-        year: Number(year),
-        month: Number(month),
-    });
+    if (year) {
+        costItem.year = Number(year)
+    }
+    if (month) {
+        costItem.month = Number(month)
+    }
+    if (day) {
+        costItem.day = Number(day)
+    }
 
-    //If a report was found, the new cost item will be added to the relevant category list
-    if (report) {
-        report.report[category].push({
-            day: Number(day),
-            description: description,
-            sum: Number(sum),
+    //Checks if a report for the requested user_id, year and month was created in the past
+    if (year && month) {
+        const report = await reports.findOne({
+            user_id: user_id,
+            year: Number(year),
+            month: Number(month),
         });
 
-        //Updates the report with the new addition
-        await reports.updateOne(
-            {
-                user_id: user_id,
-                year: Number(year),
-                month: Number(month),
-            },
-            { report: report.report }
-        );
+        //If a report was found, the new cost item will be added to the relevant category list
+        if (report && day) {
+            report.report[category].push({
+                day: Number(day),
+                description: description,
+                sum: Number(sum),
+            });
+
+            //Updates the report with the new addition
+            await reports.updateOne(
+                {
+                    user_id: user_id,
+                    year: Number(year),
+                    month: Number(month),
+                },
+                { report: report.report }
+            );
+        }
+        else if (report && !day)
+        {
+            report.report[category].push({
+                day: undefined,
+                description: description,
+                sum: Number(sum),
+            });
+
+            //Updates the report with the new addition
+            await reports.updateOne(
+                {
+                    user_id: user_id,
+                    year: Number(year),
+                    month: Number(month),
+                },
+                { report: report.report }
+            );
+        }
     }
 
     //Saves the new cost item in the cost items schema
